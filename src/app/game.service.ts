@@ -13,13 +13,12 @@ export class GameService {
     new ServeItem(ServeItemType.HotDog),
     new ServeItem(ServeItemType.Drink)
   ]);
-  
-  cookStation  = new ServeStation(1, "Bun Burner", ServeStationType.Cooker, [new ServeItem(ServeItemType.Drink)]);
-  
+  cookStation  = new ServeStation(1, "Burner", ServeStationType.Cooker, [new ServeItem(ServeItemType.Drink)]);
   trashStation  = new ServeStation(2, "Trash", ServeStationType.Trash, []);
+  customer1Station  = new ServeStation(3, "Serve", ServeStationType.Customer, []);
   
 
-  stationList: ServeStation[] = [this.bunStation, this.cookStation, this.trashStation];
+  stationList: ServeStation[] = [this.bunStation, this.cookStation, this.trashStation, this.customer1Station];
 
 
   constructor() { }
@@ -41,7 +40,15 @@ export class GameService {
     this.cookStation.currentItems.forEach(function (value:ServeItem) {
       value.doGameTick();
     }); 
-    
+
+    //Clear the trash
+    this.trashStation.currentItems = [];
+    //Serve the customer
+    this.customer1Station.currentItems = [];
+
+    if(this.bunStation.currentItems.length == 0)
+      this.bunStation.currentItems.push(new ServeItem(ServeItemType.HotDog));
+
   }
 
 

@@ -2,7 +2,7 @@
 
 *Cook it up!: Emojis* is food cooking and serving simulator game started on 2020-07-02 by Steven Slopek.
 
-Game is in very early stages and not playable yet.
+Game is in very early stages and not playable yet.  See the latest published version on [GitHub Pages](https://sslopek.github.io/cook-it-up-emojis/)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.1.
 

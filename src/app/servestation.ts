@@ -6,7 +6,8 @@ export enum ServeStationType
   HotDogBun,
   HotDogRaw,
   Cooker,
-  Trash
+  Trash,
+  Customer
 }
 
 
