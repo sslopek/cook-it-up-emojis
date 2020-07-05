@@ -1,0 +1,16 @@
+<h2>{{title}}</h2>
+<div class="station-list" 
+  [id]="serveStation.getStationID()"
+  [cdkDropListConnectedTo]="allStationsIds" 
+  [cdkDropListData]="serveStation.currentItems"
+  (cdkDropListDropped)="onDrop($event)"
+  cdkDropList>
+
+  <app-ui-serve-item class="item-box"
+    *ngFor="let item of serveStation.currentItems" 
+    [serveItem]="item"
+    cdkDragBoundary=".gamearea" 
+    cdkDrag>
+  </app-ui-serve-item>
+
+</div>
