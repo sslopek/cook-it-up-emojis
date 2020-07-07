@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { CdkDrag, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { GameService } from '../game.service';
 import { ServeStationType, ServeStation } from '../servestation';
+import { ServeItem } from '../serveitem';
 
 
 @Component({
@@ -10,9 +11,6 @@ import { ServeStationType, ServeStation } from '../servestation';
   styleUrls: ['./ui-serve-station.component.css']
 })
 export class UiServeStationComponent implements OnInit {
-
-  title: string;
-
   @Input()
   serveStation: ServeStation;
   @Input()
@@ -23,31 +21,33 @@ export class UiServeStationComponent implements OnInit {
   constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
-    this.title = this.serveStation.title;
   }
 
-
-  
-  onDrop(event: CdkDragDrop<string[]>) {
-    //Reorder in current station
+  onDrop(event: CdkDragDrop<ServeItem[]>) {
+    //Reordering in current station (not needed if station can only hold one)
     if (event.previousContainer.id === event.container.id) {
       moveItemInArray(event.previousContainer.data, event.previousIndex, event.currentIndex);
      
     } 
-    //Move to another station
+    //Moving to another station
     else {
 
-       //todo: tell item station is changed
-
-      if(event.container.data.length >= 1){
+      // If didn't already combine and slot is full, do not change list
+      if(event.container.data.length >= 2){
         console.debug('Station full');
         return;
       }
 
       transferArrayItem(event.previousContainer.data,
-          event.container.data,
-          event.previousIndex,
-          event.currentIndex);
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex);
+
+      //TODO handle before transfering array and only allow one item per station
+      //let movingItem:ServeItem = event.previousContainer.data[event.previousIndex];
+      this.serveStation.combineItems();
+
+
     }
   }  
 

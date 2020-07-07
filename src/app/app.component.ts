@@ -12,12 +12,13 @@ import { ServeStation } from './servestation';
 
 export class AppComponent {
   intervalId = 0;
-  stations: ServeStation[]
+  stations: ServeStation[][]
 
   constructor(private gameService: GameService) {}
     
 
   ngOnInit() { 
+    this.gameService.setupStations();
     this.loadStations();
     this.startGameTimer(); 
   }
@@ -42,8 +43,6 @@ export class AppComponent {
     clearInterval(this.intervalId); 
   }
 
-
-
   
   loadStations(): void {
     this.gameService.getStations()
@@ -51,9 +50,11 @@ export class AppComponent {
   }
 
   getStationsIds(): string[] {
-    return this.stations.map( (item) => item.getStationID() );
+    return this.gameService.getStationIds();
   }
-
+  getScore(): number {
+    return this.gameService.getScore();
+  }
 
 }
 

@@ -1,8 +1,10 @@
 
 export enum ServeItemType
 {
-  HotDog,
-  Drink
+  Meat,
+  Bread,
+  MeatAndBread,
+  Drink,
 }
 
 
@@ -22,6 +24,9 @@ export class ServeItem
 
   doGameTick()
   {
+    if(this.itemType !== ServeItemType.Meat)
+      return;
+
     //TODO: check station type and update status
     if(this.cookedAmount < 100) {
         this.cookedAmount += 10;
@@ -32,10 +37,14 @@ export class ServeItem
   //Icon to show
   getEmoji(): string{
     switch (this.itemType) {
-      case ServeItemType.HotDog:    
-        return '🌭';
-      case ServeItemType.Drink:    
-        return '🥤';  
+      case ServeItemType.Meat:    
+        return '🥩';
+      case ServeItemType.Bread:    
+        return '🍞';
+      case ServeItemType.MeatAndBread:    
+        return '🥪';
+      case ServeItemType.Drink:   
+        return '🥤';
       default:
         return '❓';
     }

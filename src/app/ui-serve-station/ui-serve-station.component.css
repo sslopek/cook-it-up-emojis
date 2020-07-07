@@ -2,7 +2,7 @@
     width: 100px;
     max-width: 100%;
     border: solid 1px #ccc;
-    min-height: 48px;
+    min-height: 85px;
     display: block;
     background: white;
     border-radius: 4px;
@@ -34,6 +34,7 @@
   
   .cdk-drag-placeholder {
     opacity: 0;
+    height: 0; /* Prevent moving play grid around */
   }
   
   .cdk-drag-animating {

@@ -13,20 +13,18 @@
 
 
 
+  <!-- Game Screen -->
+  <div class="card-container gamearea">
+    <div *ngFor="let stationrow of stations">
+      <app-ui-serve-station *ngFor="let station of stationrow" [serveStation]="station" [allStationsIds]="getStationsIds()"></app-ui-serve-station>
+    </div>
+  </div>
+
+  <p>Score: {{getScore()}}</p>
 
 
-<!-- Game Screen -->
+  <p><br/></p>
 
-<div class="card-container gamearea">
-
-  <app-ui-serve-station *ngFor="let station of stations" [serveStation]="station" [allStationsIds]="getStationsIds()"></app-ui-serve-station>
-
-</div>
-
-
-
-
-<p><br/><br/></p>
   <!-- Footer -->
   <footer>
       Having fun?&nbsp;
