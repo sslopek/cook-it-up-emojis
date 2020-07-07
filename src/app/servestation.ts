@@ -46,6 +46,29 @@ export class ServeStation
 
   }
 
+    //Icon to show in background
+    getEmoji(): string{
+      switch (this.stationType) {
+        case ServeStationType.Bin_Bread:    
+          return '🍞';
+        case ServeStationType.Bin_Meat:    
+          return '🥩';
+        case ServeStationType.Bin_Cup:    
+          return '🥤';
+        case ServeStationType.Process_Meat:    
+          return '🍳';
+        case ServeStationType.Locked:   
+          return '🔒';
+        case ServeStationType.Trash:   
+          return '🗑️';
+        case ServeStationType.Customer:   
+          return '🙋';
+        default:
+          return '';
+      }
+      
+    }
+
 }
 
 

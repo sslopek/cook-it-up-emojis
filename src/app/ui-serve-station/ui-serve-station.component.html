@@ -5,6 +5,8 @@
   (cdkDropListDropped)="onDrop($event)"
   cdkDropList>
 
+  <div class="station-background">{{serveStation.getEmoji()}}</div>
+
   <app-ui-serve-item class="item-box"
     *ngFor="let item of serveStation.currentItems" 
     [serveItem]="item"
