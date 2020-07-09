@@ -1,5 +1,6 @@
 .itemicon {
     padding: 20px 10px;
+    user-select: none;
 }
 
 mat-progress-bar {

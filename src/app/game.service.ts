@@ -9,15 +9,12 @@ import { ServeStationType, ServeStation } from './servestation';
 })
 export class GameService {
 
-
-  //TODO: swap x and y config after changing CSS to output as rows
   configStationLayout: ServeStationType[][] = [
-    [ServeStationType.Customer,ServeStationType.Locked,ServeStationType.Locked,ServeStationType.Bin_Cup],
-    [ServeStationType.Customer,ServeStationType.Process_Meat,ServeStationType.Process_Meat,ServeStationType.Bin_Bread],
-    [ServeStationType.Customer,ServeStationType.Process_Meat,ServeStationType.Process_Meat,ServeStationType.Bin_Meat],
-    [ServeStationType.Customer,ServeStationType.Locked,ServeStationType.Locked,ServeStationType.Trash]
+    [ServeStationType.Customer,ServeStationType.Customer,ServeStationType.Customer,ServeStationType.Customer],
+    [ServeStationType.Locked,ServeStationType.Locked,ServeStationType.Locked,ServeStationType.Locked],
+    [ServeStationType.Locked,ServeStationType.Process_Meat,ServeStationType.Process_Meat,ServeStationType.Locked],
+    [ServeStationType.Locked,ServeStationType.Bin_Bread,ServeStationType.Bin_Meat,ServeStationType.Trash]
   ];
-
 
   stationMatrix: ServeStation[][] = []; 
   private stationIds: string[] = [];

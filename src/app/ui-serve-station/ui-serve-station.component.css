@@ -2,7 +2,7 @@
     width: 100px;
     max-width: 100%;
     border: solid 1px #ccc;
-    min-height: 90px;
+    height: 90px;
     display: block;
     border-radius: 4px;
     overflow: hidden;
@@ -10,6 +10,7 @@
 }
 
 .station-background{
+  user-select: none;
   position: absolute;
   top: 5px;
   left: 15px;
@@ -58,4 +59,31 @@
 
 .station-list.cdk-drop-list-dragging .item-box:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+
+/* Customer stations */
+.station-customer{
+  height: 130px;
+}
+.station-customer .station-background{
+  top: 45px;
+}
+
+/* Request bubble above customer */
+.customer-request {
+  background: #EEE;
+  border-radius: 4px;
+  margin: 0 auto 12px;
+  padding: 5px;
+  position: relative;
+}
+.customer-request::after {
+  border-left: 20px solid transparent;
+  border-top: 20px solid #EEE;
+  bottom: -10px;
+  content: "";
+  position: absolute;
+  right: 15px;
+  z-index: -1;
 }

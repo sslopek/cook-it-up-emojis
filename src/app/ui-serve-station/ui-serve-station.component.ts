@@ -15,12 +15,13 @@ export class UiServeStationComponent implements OnInit {
   serveStation: ServeStation;
   @Input()
   allStationsIds: string[];
-
   connectedStations: string[];
+  isCustomer: boolean = false;
   
   constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
+    this.isCustomer = (this.serveStation.stationType == ServeStationType.Customer);
   }
 
   onDrop(event: CdkDragDrop<ServeItem[]>) {

@@ -1,9 +1,16 @@
+
+
 <div class="station-list" 
+  [class.station-customer]="isCustomer"
   [id]="serveStation.getStationID()"
   [cdkDropListConnectedTo]="allStationsIds" 
   [cdkDropListData]="serveStation.currentItems"
   (cdkDropListDropped)="onDrop($event)"
   cdkDropList>
+  <div *ngIf="isCustomer" class="customer-request">🥪
+    <mat-progress-bar value="0"></mat-progress-bar>
+  </div>
+  
 
   <div class="station-background">{{serveStation.getEmoji()}}</div>
 
