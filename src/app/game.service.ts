@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { ServeItemType, ServeItem } from './serveitem';
-import { ServeStationType, ServeStation } from './servestation';
+import { ServeItemType, ServeItem } from './serve-item';
+import { ServeStationType, ServeStation } from './serve-station';
 
 
 @Injectable({

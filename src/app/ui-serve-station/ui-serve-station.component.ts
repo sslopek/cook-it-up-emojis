@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CdkDrag, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { GameService } from '../game.service';
-import { ServeStationType, ServeStation } from '../servestation';
-import { ServeItem } from '../serveitem';
+import { ServeStationType, ServeStation } from '../serve-station';
+import { ServeItem } from '../serve-item';
 
 
 @Component({
@@ -28,28 +28,39 @@ export class UiServeStationComponent implements OnInit {
     //Reordering in current station (not needed if station can only hold one)
     if (event.previousContainer.id === event.container.id) {
       moveItemInArray(event.previousContainer.data, event.previousIndex, event.currentIndex);
-     
-    } 
-    //Moving to another station
-    else {
-
-      // If didn't already combine and slot is full, do not change list
-      if(event.container.data.length >= 2){
-        console.debug('Station full');
-        return;
-      }
-
+    }
+    //Moving to empty station
+    else if(event.container.data.length == 0){
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex);
-
-      //TODO handle before transfering array and only allow one item per station
-      //let movingItem:ServeItem = event.previousContainer.data[event.previousIndex];
-      this.serveStation.combineItems();
-
-
     }
+    //Moving to full station
+    else{
+      const firstIdx = 0;
+      const droppedItem = event.previousContainer.data[event.previousIndex];
+      const thisfirstItem = event.container.data[firstIdx];
+      
+      //Check forward and backward
+      if(droppedItem.canCombine(thisfirstItem))
+      {
+        droppedItem.combineWith(thisfirstItem);
+        //Remove this item and move base item here
+        event.container.data.splice(firstIdx, 1);
+        transferArrayItem(event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          firstIdx);
+      }
+      else if(thisfirstItem.canCombine(droppedItem))
+      {  
+        thisfirstItem.combineWith(droppedItem);
+        //Remove dropped item combined into this one
+        event.previousContainer.data.splice(event.previousIndex, 1);
+      }
+    }
+
   }  
 
 

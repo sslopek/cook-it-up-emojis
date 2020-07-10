@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GameService } from './game.service';
-import { ServeStation } from './servestation';
+import { ServeStation } from './serve-station';
 
 
 @Component({
