@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CdkDrag, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { GameService } from '../game.service';
-import { ServeStationType, ServeStation } from '../serve-station';
-import { ServeItem } from '../serve-item';
+import { GameService } from '../game/game.service';
+import { ServeStationType, ServeStation } from '../game/serve-station';
+import { ServeItem } from '../game/serve-item';
 
 
 @Component({
