@@ -12,8 +12,8 @@ export class GameService {
   configStationLayout: ServeStationType[][] = [
     [ServeStationType.Customer,ServeStationType.Customer,ServeStationType.Customer,ServeStationType.Customer],
     [ServeStationType.Locked,ServeStationType.Locked,ServeStationType.Locked,ServeStationType.Locked],
-    [ServeStationType.Locked,ServeStationType.Process_Meat,ServeStationType.Process_Meat,ServeStationType.Locked],
-    [ServeStationType.Locked,ServeStationType.Bin_Bread,ServeStationType.Bin_Meat,ServeStationType.Trash]
+    [ServeStationType.Process_Cup,ServeStationType.Process_Meat,ServeStationType.Process_Meat,ServeStationType.Locked],
+    [ServeStationType.Bin_Cup,ServeStationType.Bin_Bread,ServeStationType.Bin_Meat,ServeStationType.Trash]
   ];
 
   stationMatrix: ServeStation[][] = []; 
@@ -22,8 +22,7 @@ export class GameService {
 
   constructor() { }
 
-  setupStations()
-  {
+  setupStations() {
     this.stationIds = [];
 
     let currentId = 0;
@@ -43,15 +42,15 @@ export class GameService {
   }
   
   //ID list for drag and drop functionality
-  getStationIds(): string[]{
+  getStationIds(): string[] {
     return this.stationIds;
   }
 
-  getScore(): number{
+  getScore(): number {
     return this.gameScore;
   }
 
-  doAllTicks(){
+  doAllTicks() {
 
     for (let x = 0; x < this.stationMatrix.length; x++) {   
       for (let y = 0; y < this.stationMatrix.length; y++) { 
@@ -59,10 +58,17 @@ export class GameService {
         const station = this.stationMatrix[x][y];
 
         switch (station.stationType) {
+          case ServeStationType.Process_Cup:
           case ServeStationType.Process_Meat:
             station.currentItems.forEach(function (value:ServeItem) {
-              value.doGameTick();
-            })
+              
+              const combination = VALID_PROCESSING_COMBINATIONS.find(([firstType, secondType]) =>
+                firstType == value.itemType && secondType == station.stationType
+              );
+
+              if(combination)
+                value.doProcessTick();
+            });
             break;
           case ServeStationType.Trash:
             station.currentItems = [];
@@ -70,7 +76,8 @@ export class GameService {
           case ServeStationType.Customer:
             //Score each item and clear
             station.currentItems.forEach(i => {
-              if(i.itemType==ServeItemType.MeatAndBread)
+              if(i.itemType==ServeItemType.MeatAndBread
+                  || (i.itemType==ServeItemType.Drink && i.cookedAmount == 100) )
                 this.gameScore += 10;
               else
                 this.gameScore -= 10;
@@ -85,6 +92,10 @@ export class GameService {
             if(station.currentItems.length == 0)
               station.currentItems.push(new ServeItem(ServeItemType.Meat));
             break;
+          case ServeStationType.Bin_Cup:
+            if(station.currentItems.length == 0)
+              station.currentItems.push(new ServeItem(ServeItemType.Drink));
+            break;
           default:
             break;
         }
@@ -94,6 +105,14 @@ export class GameService {
 
   }
 
-
-  
 }
+
+
+
+type IProcessDictionary = [ServeItemType, ServeStationType];
+
+
+const VALID_PROCESSING_COMBINATIONS: IProcessDictionary[] = [ 
+  [ServeItemType.Meat, ServeStationType.Process_Meat],
+  [ServeItemType.Drink, ServeStationType.Process_Cup] 
+];

@@ -6,6 +6,7 @@ export enum ServeStationType
   Bin_Bread,
   Bin_Cup,
   Process_Meat,
+  Process_Cup,
   Trash,
   Customer,
   Locked
@@ -36,6 +37,8 @@ export class ServeStation
           return '🥤';
         case ServeStationType.Process_Meat:    
           return '🍳';
+        case ServeStationType.Process_Cup:    
+          return '🚰';
         case ServeStationType.Locked:   
           return '🔒';
         case ServeStationType.Trash:   

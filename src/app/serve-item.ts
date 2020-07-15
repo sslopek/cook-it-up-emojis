@@ -20,12 +20,8 @@ export class ServeItem
     return ServeItemType[this.itemType];
   }
 
-  doGameTick()
+  doProcessTick()
   {
-    if(this.itemType !== ServeItemType.Meat)
-      return;
-
-    //TODO: check station type and update status
     if(this.cookedAmount < 100) {
         this.cookedAmount += 10;
     }
@@ -78,10 +74,10 @@ const isCooked:CombineCheckFunc = function (a:ServeItem){
     return a.cookedAmount == 100;
 }
 
-
 const VALID_ITEM_COMBINATIONS: ICombineDictionary[] = [ 
-    [ServeItemType.Meat, ServeItemType.Bread, ServeItemType.MeatAndBread, isCooked] 
+  [ServeItemType.Meat, ServeItemType.Bread, ServeItemType.MeatAndBread, isCooked] 
 ];
+
 
 
 /* Emojis */
