@@ -33,9 +33,7 @@ export class ServeItem
 
   canCombine(other: ServeItem): boolean {
     //Look at rule until find matching
-    const canCombine = VALID_ITEM_COMBINATIONS.some(tuple => {
-      const [firstType, secondType, combinedType, checkFunction] = tuple;
-
+    const canCombine = VALID_ITEM_COMBINATIONS.some(([firstType, secondType, , checkFunction]) => {
       //Check against game rules
       if (firstType == this.itemType
         && secondType == other.itemType
@@ -54,8 +52,8 @@ export class ServeItem
       return;
 
     //Retrieve first matching combination
-    const combination = VALID_ITEM_COMBINATIONS.find(tuple =>
-          tuple[0] == this.itemType && tuple[1] == other.itemType
+    const combination = VALID_ITEM_COMBINATIONS.find(([firstType, secondType]) =>
+          firstType == this.itemType && secondType == other.itemType
         );
 
     this.itemType = combination[2];
@@ -63,7 +61,7 @@ export class ServeItem
 
   //Icon to show
   getEmoji(): string{
-    const emoji = ITEM_EMOJI.find(e => (e[0] == this.itemType));
+    const emoji = ITEM_EMOJI.find(([serveItemType]) => (serveItemType == this.itemType));
     // show ? when not found
     return emoji?.[1] || '❓';    
   }
