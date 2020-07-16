@@ -15,6 +15,7 @@ export class ServeItem
   getEmoji = () => this.settings.Emoji;    
   isBurnt = () => this.cookedAmount >= this.burntTarget;
   isCooked = () => this.cookedAmount > this.cookedTarget && !this.isBurnt();
+  readyToServe = () => this.settings.ServeCondition(this, null);
 
   doProcessTick() {
     if(this.cookedAmount < this.burntTarget) {

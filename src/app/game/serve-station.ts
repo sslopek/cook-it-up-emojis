@@ -6,6 +6,10 @@ export class ServeStation
   private settings: IStationSettings;
   public currentItems: ServeItem[] = []; 
 
+  //Customer station requests
+  public customerRequests: ServeItem[] = []; 
+  private lastRequest = 100;
+
   constructor(
     public id: number,
     public stationType: ServeStationType
@@ -39,19 +43,55 @@ export class ServeStation
     }
 
     // Serve customer
-    var scoreChange = 0;
+    let scoreChange = 0;
     if(this.stationType == ServeStationType.Customer) {
-      // Score each item
-      for(const item of this.currentItems) {
-        if(item.foodName==FoodName.Sandwich || (item.foodName==FoodName.Drink && item.isCooked()) )
-            scoreChange += 10;
-        else
-          scoreChange -= 10;
-      }
-      // Clear after serve
-      this.currentItems = [];
+      scoreChange = this.handleServing();
     }
+
+    // Update customer related properties
+    if(this.stationType == ServeStationType.Customer) {
+      this.updateRequests();
+    }
+
     return scoreChange;
+  }
+
+  handleServing() {
+    // Score each item
+    let scoreChange = 0;
+    for(const item of this.currentItems) {
+      const matchingRequest = this.customerRequests.find(req => req.foodName == item.foodName);
+
+      if(matchingRequest != null && item.readyToServe()) {
+        // Remove the request
+        const index = this.customerRequests.indexOf(matchingRequest, 0);
+        if (index > -1)
+          this.customerRequests.splice(index, 1);
+        // Add points
+        scoreChange += 10;
+      }
+      else {
+        scoreChange -= 10;
+      }
+    }
+    // Clear after serve
+    this.currentItems = [];
+    
+    return scoreChange;
+  }
+
+  updateRequests() {
+    if(this.customerRequests.length == 0) {     
+      //Ready for new requests
+      if(this.lastRequest >= 100) {
+        this.lastRequest = 0;
+        this.customerRequests.push(new ServeItem(FoodName.Sandwich));
+        this.customerRequests.push(new ServeItem(FoodName.Drink));
+      }
+      else {
+        this.lastRequest += 10;
+      }
+    }
   }
 
 }
