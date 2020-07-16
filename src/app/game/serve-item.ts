@@ -1,94 +1,119 @@
-export enum ServeItemType
-{
-  Meat,
-  Bread,
-  MeatAndBread,
-  Drink,
-}
-
 export class ServeItem
 {
+  private settings: IItemSettings;
 
   constructor(
-    public itemType: ServeItemType,
+    public foodName: FoodName,
     public cookedAmount: number = 0
-  ) {}
-
-
-  getDisplayText()
-  {
-    return ServeItemType[this.itemType];
+  ) {
+    const itemSettings = AllItemSettings[foodName];
+    this.settings = { ...ItemDefaults, ...itemSettings };
   }
 
-  doProcessTick()
-  {
+  getDisplayText() {
+    return FoodType[this.foodName];
+  }
+
+  doProcessTick() {
     if(this.cookedAmount < 100) {
         this.cookedAmount += 10;
     }
   }
 
-  canCombine(other: ServeItem): boolean {
-    //Look at rule until find matching
-    const canCombine = VALID_ITEM_COMBINATIONS.some(([firstType, secondType, , checkFunction]) => {
-      //Check against game rules
-      if (firstType == this.itemType
-        && secondType == other.itemType
-        && checkFunction(this, other)){
-          return true;
-        }
-      else
-        return false;
-    });
-
-    return canCombine;
+  canCombine(other: ServeItem) {
+    if(this.settings.Type == FoodType.CombineBase
+        && this.settings.CombineWith.find(v => v == other.foodName)
+        && this.settings.CombineCondition(this, other))
+      return true;
+    else 
+      return false;
   }
 
-  combineWith(other: ServeItem): void {
+  combineWith(other: ServeItem) {
     if(!this.canCombine(other))
       return;
 
-    //Retrieve first matching combination
-    const combination = VALID_ITEM_COMBINATIONS.find(([firstType, secondType]) =>
-          firstType == this.itemType && secondType == other.itemType
-        );
+    this.foodName = this.settings.CombineResult;
 
-    this.itemType = combination[2];
+    const newSettings = AllItemSettings[this.foodName];
+    this.settings = { ...ItemDefaults, ...newSettings };
   }
 
   //Icon to show
   getEmoji(): string{
-    const emoji = ITEM_EMOJI.find(([serveItemType]) => (serveItemType == this.itemType));
-    // show ? when not found
-    return emoji?.[1] || '❓';    
+    return this.settings.Emoji;    
   }
 
 }
 
 
-
-/* Item Combinations */
-type CombineCheckFunc = (a:ServeItem, b:ServeItem) => boolean;
-type ICombineDictionary = [ServeItemType, ServeItemType, ServeItemType, CombineCheckFunc];
-
-const isCooked:CombineCheckFunc = function (a:ServeItem){
-    return a.cookedAmount == 100;
+/* Enums for items*/
+export enum FoodName
+{
+  Meat,
+  Bread,
+  Sandwich,
+  Drink
 }
 
-const VALID_ITEM_COMBINATIONS: ICombineDictionary[] = [ 
-  [ServeItemType.Meat, ServeItemType.Bread, ServeItemType.MeatAndBread, isCooked] 
-];
+enum FoodType
+{
+  CombineBase,
+  CombineComponent,
+  CombineResult,
+  ProcessAndServe
+}
 
 
+/* Functions for item logic */
+type CombineCheckFunc = (a:ServeItem, b:ServeItem) => boolean;
 
-/* Emojis */
+const isCooked:CombineCheckFunc = (a:ServeItem) => a.cookedAmount == 100;
+const never:CombineCheckFunc = () => false;
+const always:CombineCheckFunc = () => false;
 
-type IItemEmojiDictionary = [ServeItemType, string];
-const ITEM_EMOJI: IItemEmojiDictionary[]  = [
-    [ServeItemType.Meat, '🥩'],
-    [ServeItemType.Bread, '🍞'],
-    [ServeItemType.MeatAndBread, '🥪'],
-    [ServeItemType.Drink, '🥤']
-];
+
+/* Item setting definition */
+interface IItemSettings {
+  Type: FoodType,
+  Emoji: string,
+  CombineWith? : Array<FoodName>,
+  CombineResult? : FoodName,
+  CombineCondition? : CombineCheckFunc,
+  ServeCondition? : CombineCheckFunc
+}
+
+const ItemDefaults: IItemSettings = {
+  Type: FoodType.ProcessAndServe,
+  Emoji: '❓',
+  CombineWith: [],
+  CombineCondition: never,
+  ServeCondition : never
+}
+
+const AllItemSettings: Record<FoodName, IItemSettings> = {
+  [FoodName.Meat]: {   
+    Type: FoodType.CombineBase,
+    Emoji: '🥩',
+    CombineWith: [FoodName.Bread],
+    CombineResult: FoodName.Sandwich,
+    CombineCondition: isCooked
+  },
+  [FoodName.Bread]:{
+    Type: FoodType.CombineComponent,
+    Emoji: '🍞'
+  },
+  [FoodName.Sandwich]: {
+    Type: FoodType.CombineResult,
+    Emoji: '🥪',
+    ServeCondition: always
+  },
+  [FoodName.Drink]:{
+    Type: FoodType.CombineComponent,
+    Emoji: '🥤',
+    ServeCondition: isCooked
+  }
+};
 
 
 

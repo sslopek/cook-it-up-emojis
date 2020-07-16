@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { ServeItemType, ServeItem } from './serve-item';
+import { FoodName, ServeItem } from './serve-item';
 import { ServeStationType, ServeStation } from './serve-station';
 
 
@@ -63,7 +63,7 @@ export class GameService {
             station.currentItems.forEach(function (value:ServeItem) {
               
               const combination = VALID_PROCESSING_COMBINATIONS.find(([firstType, secondType]) =>
-                firstType == value.itemType && secondType == station.stationType
+                firstType == value.foodName && secondType == station.stationType
               );
 
               if(combination)
@@ -76,8 +76,8 @@ export class GameService {
           case ServeStationType.Customer:
             //Score each item and clear
             station.currentItems.forEach(i => {
-              if(i.itemType==ServeItemType.MeatAndBread
-                  || (i.itemType==ServeItemType.Drink && i.cookedAmount == 100) )
+              if(i.foodName==FoodName.Sandwich
+                  || (i.foodName==FoodName.Drink && i.cookedAmount == 100) )
                 this.gameScore += 10;
               else
                 this.gameScore -= 10;
@@ -86,15 +86,15 @@ export class GameService {
             break;
           case ServeStationType.Bin_Bread:
             if(station.currentItems.length == 0)
-              station.currentItems.push(new ServeItem(ServeItemType.Bread));
+              station.currentItems.push(new ServeItem(FoodName.Bread));
             break;
           case ServeStationType.Bin_Meat:
             if(station.currentItems.length == 0)
-              station.currentItems.push(new ServeItem(ServeItemType.Meat));
+              station.currentItems.push(new ServeItem(FoodName.Meat));
             break;
           case ServeStationType.Bin_Cup:
             if(station.currentItems.length == 0)
-              station.currentItems.push(new ServeItem(ServeItemType.Drink));
+              station.currentItems.push(new ServeItem(FoodName.Drink));
             break;
           default:
             break;
@@ -109,10 +109,10 @@ export class GameService {
 
 
 
-type IProcessDictionary = [ServeItemType, ServeStationType];
+type IProcessDictionary = [FoodName, ServeStationType];
 
 
 const VALID_PROCESSING_COMBINATIONS: IProcessDictionary[] = [ 
-  [ServeItemType.Meat, ServeStationType.Process_Meat],
-  [ServeItemType.Drink, ServeStationType.Process_Cup] 
+  [FoodName.Meat, ServeStationType.Process_Meat],
+  [FoodName.Drink, ServeStationType.Process_Cup] 
 ];

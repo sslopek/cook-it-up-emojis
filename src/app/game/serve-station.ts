@@ -1,4 +1,4 @@
-import { ServeItemType, ServeItem } from './serve-item';
+import { ServeItem } from './serve-item';
 
 export enum ServeStationType
 {

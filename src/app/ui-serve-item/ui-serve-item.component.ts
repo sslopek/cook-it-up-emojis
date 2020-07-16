@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ServeItemType, ServeItem } from '../game/serve-item';
+import { ServeItem } from '../game/serve-item';
 
 @Component({
   selector: 'app-ui-serve-item',
