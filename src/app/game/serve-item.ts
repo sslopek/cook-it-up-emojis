@@ -11,7 +11,7 @@ export class ServeItem
     this.reloadItemSettings();
   }
 
-  getDisplayText = () => FoodType[this.foodName];
+  getDisplayText = () => FoodName[this.foodName];
   getEmoji = () => this.settings.Emoji;    
   isBurnt = () => this.cookedAmount >= this.burntTarget;
   isCooked = () => this.cookedAmount > this.cookedTarget && !this.isBurnt();
@@ -24,7 +24,7 @@ export class ServeItem
   
   canCombine(other: ServeItem) {
     if(this.settings.Type == FoodType.CombineBase
-        && this.settings.CombineWith.find(v => v == other.foodName)
+        && this.settings.CombineWith.find(v => v == other.foodName) != null
         && this.settings.CombineCondition(this, other))
       return true;
     else 

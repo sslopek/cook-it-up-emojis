@@ -2,86 +2,53 @@ import { ServeItem, FoodName } from './serve-item';
 
 export class ServeStation
 {
+
+  private settings: IStationSettings;
   public currentItems: ServeItem[] = []; 
 
   constructor(
     public id: number,
     public stationType: ServeStationType
-  ) {}
-
-  getStationID(): string {
-    return "station" + this.id;
+  ) {
+    const newSettings = AllStationSettings[this.stationType];
+    this.settings = { ...StationDefaults, ...newSettings };
   }
 
-  //Icon to show in background
-  getEmoji(): string {
-      switch (this.stationType) {
-        case ServeStationType.Bin_Bread:    
-          return '🍞';
-        case ServeStationType.Bin_Meat:    
-          return '🥩';
-        case ServeStationType.Bin_Cup:    
-          return '🥤';
-        case ServeStationType.Process_Meat:    
-          return '🍳';
-        case ServeStationType.Process_Cup:    
-          return '🚰';
-        case ServeStationType.Locked:   
-          return '🔒';
-        case ServeStationType.Trash:   
-          return '🗑️';
-        case ServeStationType.Customer:   
-          return '🙋';
-        default:
-          return '';
-      }
-  }
-
+  // ID for user interface
+  getStationID = () => "station" + this.id;
+  // Icon to show in background
+  getEmoji = () => this.settings.Emoji;
 
   // Handle items and return score delta
   processTick(): number {
-    // Refill empty bins
-    if(this.currentItems.length == 0) {
-      switch (this.stationType) {
-        case ServeStationType.Bin_Bread:
-          this.currentItems.push(new ServeItem(FoodName.Bread));
-          break;
-        case ServeStationType.Bin_Meat:
-          this.currentItems.push(new ServeItem(FoodName.Meat));
-          break;
-        case ServeStationType.Bin_Cup:
-          this.currentItems.push(new ServeItem(FoodName.Drink));
-          break;
-      }
-    }
 
     // Take out the trash
     if(this.stationType == ServeStationType.Trash)
       this.currentItems = [];
 
-    // Process items
-    if(this.stationType == ServeStationType.Process_Cup || this.stationType == ServeStationType.Process_Meat) { 
-      for(const item of this.currentItems) {
-        const combination = VALID_PROCESSING_COMBINATIONS.find(([firstType, secondType]) =>
-          firstType == item.foodName && secondType == this.stationType
-        );
+    // Refill empty bins
+    if(this.currentItems.length == 0) {
+      if(this.settings.RefillItem != null)
+        this.currentItems.push(new ServeItem(this.settings.RefillItem));
+    }
 
-        if(combination)
-          item.doProcessTick();
-      }
+    // Process applicable items
+    for(const item of this.currentItems) {
+      if(this.settings.ProcessItems.find(value => value == item.foodName) != null)
+        item.doProcessTick();
     }
 
     // Serve customer
     var scoreChange = 0;
     if(this.stationType == ServeStationType.Customer) {
-      //Score each item
+      // Score each item
       for(const item of this.currentItems) {
         if(item.foodName==FoodName.Sandwich || (item.foodName==FoodName.Drink && item.isCooked()) )
             scoreChange += 10;
         else
           scoreChange -= 10;
       }
-      //Clear after serve
+      // Clear after serve
       this.currentItems = [];
     }
     return scoreChange;
@@ -90,6 +57,7 @@ export class ServeStation
 }
 
 
+/* Enum of station types */
 export enum ServeStationType
 {
   Bin_Meat,
@@ -102,13 +70,47 @@ export enum ServeStationType
   Locked
 }
 
-type IProcessDictionary = [FoodName, ServeStationType];
 
+/* Station setting definition */
+interface IStationSettings {
+  Emoji: string,
+  RefillItem? : FoodName,
+  ProcessItems? : Array<FoodName>
+}
 
-const VALID_PROCESSING_COMBINATIONS: IProcessDictionary[] = [ 
-  [FoodName.Meat, ServeStationType.Process_Meat],
-  [FoodName.Drink, ServeStationType.Process_Cup] 
-];
+const StationDefaults: IStationSettings = {
+  Emoji: '',
+  ProcessItems: []
+}
 
-
-
+const AllStationSettings: Record<ServeStationType, IStationSettings> = {
+  [ServeStationType.Bin_Bread]: { 
+    Emoji: '🍞',
+    RefillItem: FoodName.Bread  
+  },
+  [ServeStationType.Bin_Cup]: { 
+    Emoji: '🥤',
+    RefillItem: FoodName.Drink  
+  },
+  [ServeStationType.Bin_Meat]: { 
+    Emoji: '🥩',
+    RefillItem: FoodName.Meat  
+  },
+  [ServeStationType.Customer]: { 
+    Emoji: '🙋'
+  },
+  [ServeStationType.Locked]: { 
+    Emoji: '🔒'
+  },
+  [ServeStationType.Process_Cup]: { 
+    Emoji: '🚰',
+    ProcessItems: [FoodName.Drink]
+  },
+  [ServeStationType.Process_Meat]: { 
+    Emoji: '🍳',
+    ProcessItems: [FoodName.Meat]
+  },
+  [ServeStationType.Trash]: { 
+    Emoji: '🗑️'
+  }
+};
