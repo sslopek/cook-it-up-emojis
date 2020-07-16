@@ -45,7 +45,7 @@
   }
 
   footer {
-    margin-top: 48px;
+    margin-top: 32px;
     display: flex;
     align-items: center;
     line-height: 20px;
@@ -86,11 +86,3 @@
 
 
 
-  app-ui-serve-station{
-    padding: 5px 5px;
-  }
-
-  .station-row
-  {
-    display: flex;
-  }

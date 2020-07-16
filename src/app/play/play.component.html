@@ -1,0 +1,8 @@
+<!-- Game Screen -->
+<div class="gamearea">
+    <div class="station-row" *ngFor="let stationrow of stations">
+        <app-ui-serve-station *ngFor="let station of stationrow" [serveStation]="station" [allStationsIds]="getStationsIds()"></app-ui-serve-station>
+    </div>
+</div>
+
+<p>Score: {{getScore()}}</p>
