@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { FoodName, ServeItem } from './serve-item';
 import { ServeStationType, ServeStation } from './serve-station';
 
 
@@ -22,6 +21,13 @@ export class GameService {
 
   constructor() { }
 
+  // Current score
+  getScore = () => this.gameScore;
+
+  // ID list for drag and drop functionality
+  getStationIds = () => this.stationIds;
+
+  // Create station instances from layout config
   setupStations() {
     this.stationIds = [];
 
@@ -37,82 +43,19 @@ export class GameService {
     }
   }
 
+  // Station matrix for user interface
   getStations(): Observable<ServeStation[][]> {
     return of(this.stationMatrix);
   }
   
-  //ID list for drag and drop functionality
-  getStationIds(): string[] {
-    return this.stationIds;
-  }
-
-  getScore(): number {
-    return this.gameScore;
-  }
-
+  // Process station logic
   doAllTicks() {
-
     for (let x = 0; x < this.stationMatrix.length; x++) {   
       for (let y = 0; y < this.stationMatrix.length; y++) { 
-
-        const station = this.stationMatrix[x][y];
-
-        switch (station.stationType) {
-          case ServeStationType.Process_Cup:
-          case ServeStationType.Process_Meat:
-            station.currentItems.forEach(function (value:ServeItem) {
-              
-              const combination = VALID_PROCESSING_COMBINATIONS.find(([firstType, secondType]) =>
-                firstType == value.foodName && secondType == station.stationType
-              );
-
-              if(combination)
-                value.doProcessTick();
-            });
-            break;
-          case ServeStationType.Trash:
-            station.currentItems = [];
-            break;
-          case ServeStationType.Customer:
-            //Score each item and clear
-            station.currentItems.forEach(i => {
-              if(i.foodName==FoodName.Sandwich
-                  || (i.foodName==FoodName.Drink && i.isCooked()) )
-                this.gameScore += 10;
-              else
-                this.gameScore -= 10;
-            });
-            station.currentItems = [];
-            break;
-          case ServeStationType.Bin_Bread:
-            if(station.currentItems.length == 0)
-              station.currentItems.push(new ServeItem(FoodName.Bread));
-            break;
-          case ServeStationType.Bin_Meat:
-            if(station.currentItems.length == 0)
-              station.currentItems.push(new ServeItem(FoodName.Meat));
-            break;
-          case ServeStationType.Bin_Cup:
-            if(station.currentItems.length == 0)
-              station.currentItems.push(new ServeItem(FoodName.Drink));
-            break;
-          default:
-            break;
-        }
-
+        const scoreDelta = this.stationMatrix[x][y].processTick();
+        this.gameScore += scoreDelta;
       } 
     }
-
   }
 
 }
-
-
-
-type IProcessDictionary = [FoodName, ServeStationType];
-
-
-const VALID_PROCESSING_COMBINATIONS: IProcessDictionary[] = [ 
-  [FoodName.Meat, ServeStationType.Process_Meat],
-  [FoodName.Drink, ServeStationType.Process_Cup] 
-];

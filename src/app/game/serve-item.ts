@@ -11,7 +11,7 @@ export class ServeItem
     this.reloadItemSettings();
   }
 
-  getDisplayText =  () => FoodType[this.foodName];
+  getDisplayText = () => FoodType[this.foodName];
   getEmoji = () => this.settings.Emoji;    
   isBurnt = () => this.cookedAmount >= this.burntTarget;
   isCooked = () => this.cookedAmount > this.cookedTarget && !this.isBurnt();
