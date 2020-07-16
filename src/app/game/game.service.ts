@@ -77,7 +77,7 @@ export class GameService {
             //Score each item and clear
             station.currentItems.forEach(i => {
               if(i.foodName==FoodName.Sandwich
-                  || (i.foodName==FoodName.Drink && i.cookedAmount == 100) )
+                  || (i.foodName==FoodName.Drink && i.isCooked()) )
                 this.gameScore += 10;
               else
                 this.gameScore -= 10;

@@ -1,25 +1,27 @@
 export class ServeItem
 {
   private settings: IItemSettings;
+  private readonly burntTarget = 200;
+  private readonly cookedTarget = 100;
 
   constructor(
     public foodName: FoodName,
     public cookedAmount: number = 0
   ) {
-    const itemSettings = AllItemSettings[foodName];
-    this.settings = { ...ItemDefaults, ...itemSettings };
+    this.reloadItemSettings();
   }
 
-  getDisplayText() {
-    return FoodType[this.foodName];
-  }
+  getDisplayText =  () => FoodType[this.foodName];
+  getEmoji = () => this.settings.Emoji;    
+  isBurnt = () => this.cookedAmount >= this.burntTarget;
+  isCooked = () => this.cookedAmount > this.cookedTarget && !this.isBurnt();
 
   doProcessTick() {
-    if(this.cookedAmount < 100) {
+    if(this.cookedAmount < this.burntTarget) {
         this.cookedAmount += 10;
     }
   }
-
+  
   canCombine(other: ServeItem) {
     if(this.settings.Type == FoodType.CombineBase
         && this.settings.CombineWith.find(v => v == other.foodName)
@@ -34,14 +36,12 @@ export class ServeItem
       return;
 
     this.foodName = this.settings.CombineResult;
-
-    const newSettings = AllItemSettings[this.foodName];
-    this.settings = { ...ItemDefaults, ...newSettings };
+    this.reloadItemSettings();
   }
 
-  //Icon to show
-  getEmoji(): string{
-    return this.settings.Emoji;    
+  private reloadItemSettings() {
+    const newSettings = AllItemSettings[this.foodName];
+    this.settings = { ...ItemDefaults, ...newSettings };
   }
 
 }
@@ -68,10 +68,11 @@ enum FoodType
 /* Functions for item logic */
 type CombineCheckFunc = (a:ServeItem, b:ServeItem) => boolean;
 
-const isCooked:CombineCheckFunc = (a:ServeItem) => a.cookedAmount == 100;
-const never:CombineCheckFunc = () => false;
-const always:CombineCheckFunc = () => false;
-
+const Conditions: Record<string, CombineCheckFunc> = {
+  cooked: (a:ServeItem) => a.isCooked(),
+  never: () => false,
+  always: () => true
+}
 
 /* Item setting definition */
 interface IItemSettings {
@@ -87,8 +88,8 @@ const ItemDefaults: IItemSettings = {
   Type: FoodType.ProcessAndServe,
   Emoji: '❓',
   CombineWith: [],
-  CombineCondition: never,
-  ServeCondition : never
+  CombineCondition: Conditions.never,
+  ServeCondition : Conditions.never
 }
 
 const AllItemSettings: Record<FoodName, IItemSettings> = {
@@ -97,7 +98,7 @@ const AllItemSettings: Record<FoodName, IItemSettings> = {
     Emoji: '🥩',
     CombineWith: [FoodName.Bread],
     CombineResult: FoodName.Sandwich,
-    CombineCondition: isCooked
+    CombineCondition: Conditions.cooked
   },
   [FoodName.Bread]:{
     Type: FoodType.CombineComponent,
@@ -106,12 +107,12 @@ const AllItemSettings: Record<FoodName, IItemSettings> = {
   [FoodName.Sandwich]: {
     Type: FoodType.CombineResult,
     Emoji: '🥪',
-    ServeCondition: always
+    ServeCondition: Conditions.always
   },
   [FoodName.Drink]:{
     Type: FoodType.CombineComponent,
     Emoji: '🥤',
-    ServeCondition: isCooked
+    ServeCondition: Conditions.cooked
   }
 };
 

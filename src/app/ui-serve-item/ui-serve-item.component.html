@@ -1,5 +1,6 @@
 <div class="itemicon" 
     title="{{serveItem.getDisplayText()}}" 
-    [class.cooked]="serveItem.cookedAmount == 100">{{serveItem.getEmoji()}}
+    [class.cooked]="serveItem.isCooked()"
+    [class.burnt]="serveItem.isBurnt()">{{serveItem.getEmoji()}}
 </div>
 <mat-progress-bar [value]="serveItem.cookedAmount"></mat-progress-bar>
